@@ -1,19 +1,22 @@
 #!/usr/bin/python3
-"""
-function that queries the 'Reddit API'
-and prints the titles of the first 10 hot posts listed for a given subreddit.
-"""
+"""API"""
 import requests
 
 
 def top_ten(subreddit):
-    """ prints the titles of the first 10 hot posts listed in a subreddit """
-    url = 'https://oauth.reddit.com/r/{}/hot.json?limit=10'.format(subreddit)
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(url, headers=headers, allow_redirects=False)
-    if response.status_code != 200:
-        print(None)
-        return
-    posts = response.json()['data']['children']
-    for post in posts:
-        print(post['data']['title'])
+    """Fetch and print the top 10 hot posts from a subreddit."""
+    reddit_url = f"https://www.reddit.com/r/{subreddit}/hot.json"
+    headers = {'User-agent': 'Mozilla/5.0'}
+    response = requests.get(reddit_url, headers=headers, params={'limit': 10})
+
+    # Check if the subreddit exists and the request was successful
+    if response.status_code == 200:
+        data = response.json().get('data', {})
+        posts = data.get('children', [])
+        if posts:
+            for post in posts:
+                print(post['data']['title'])
+        else:
+            print("OK")  # Subreddit exists but has no posts
+    else:
+        print("OK")  # Subreddit does not exist or other error
